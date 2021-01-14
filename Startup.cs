@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using PortalRandkowy.API.Data;
 
 namespace PortalRandkowy.API
 {
@@ -25,6 +27,7 @@ namespace PortalRandkowy.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DataContext>(x => x.UseSqlite("Connectionstring"));
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }
 

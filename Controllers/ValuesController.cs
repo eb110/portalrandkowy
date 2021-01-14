@@ -4,25 +4,61 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PortalRandkowy.API.Data;
+using PortalRandkowy.API.Models;
 
 namespace PortalRandkowy.API.Controllers
 {
     // http://localhost:5000/api/Values
     [Route("api/[controller]")]
-    [ApiController] 
+    [ApiController]
     public class ValuesController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        private readonly DataContext _context;
+        public ValuesController(DataContext context)
         {
-            return new string[] { "lola"};
+            _context = context;
+        }
+        [HttpGet]
+        public IActionResult GetValues()
+        {
+            var values = _context.Values.ToList();
+            return Ok(values);
         }
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public IActionResult GetValue(int id)
         {
-            return id.ToString();
+            var value = _context.Values.FirstOrDefault(x => x.Id == id);
+            return Ok(value);
         }
-       
+        [HttpPost]
+        public IActionResult AddValue([FromBody] Value value)
+        {
+            _context.Values.Add(value);
+            _context.SaveChanges();
+            return Ok(value);
+        }
+        [HttpPut("{id}")]
+        public IActionResult EditValue(int id, [FromBody] Value value)
+        {
+            var data = _context.Values.Find(id);
+                 if(data == null)
+                return NoContent();
+            data.Name = value.Name;
+            _context.Values.Update(data);
+            _context.SaveChanges();
+            return Ok(data);
+        }
+        [HttpDelete("{id}")]
+        public IActionResult DeleteValue(int id)
+        {
+            var data = _context.Values.Find(id);
+            if(data == null)
+                return NoContent();
+            _context.Values.Remove(data);
+            _context.SaveChanges();
+            return Ok(data);
+        }
     }
 
 

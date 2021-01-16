@@ -29,6 +29,7 @@ namespace PortalRandkowy.API
         {
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddCors();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -37,6 +38,7 @@ namespace PortalRandkowy.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseMvc();
         }
     }
